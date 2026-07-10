@@ -1,0 +1,1556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aura — Life Weather for Your Inner Ecosystem</title>
+<link href="https://cdn.jsdelivr.net/fontsource/css/fraunces@latest/latin-500.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/fontsource/css/fraunces@latest/latin-400-italic.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/fontsource/css/inter@latest/latin-400.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/fontsource/css/inter@latest/latin-500.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/fontsource/css/inter@latest/latin-600.css" rel="stylesheet">
+<style>
+  :root {
+    --oat: #faf6ef;
+    --sand: #f3ebdd;
+    --espresso: #3d2e24;
+    --taupe: #6b5949;
+    --latte: #e5dcc9;
+    --terracotta: #c86a4d;
+    --terracotta-soft: rgba(200, 106, 77, 0.12);
+    --sage: #8aa887;
+    --sage-soft: rgba(138, 168, 135, 0.15);
+    --amber: #d4a574;
+    --amber-soft: rgba(212, 165, 116, 0.18);
+    --clay: #8c5a4b;
+    --shadow-warm: 0 20px 40px -20px rgba(61, 46, 36, 0.18);
+    --shadow-pressed: inset 0 1px 0 rgba(255,255,255,0.6), 0 1px 2px rgba(61,46,36,0.04);
+    --radius-sm: 10px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --radius-xl: 32px;
+    --radius-pill: 999px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { font-size: 16px; scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--oat);
+    color: var(--espresso);
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.6;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+    opacity: 0.035;
+    pointer-events: none;
+    z-index: 10000;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  em { font-style: italic; color: var(--terracotta); }
+
+  .page {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 48px 40px 80px;
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 56px;
+  }
+
+  .eyebrow {
+    font-size: 11px;
+    color: var(--taupe);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .page-title {
+    font-size: clamp(36px, 5vw, 56px);
+    margin-bottom: 16px;
+    letter-spacing: -0.03em;
+  }
+
+  .page-subtitle {
+    font-size: 16px;
+    color: var(--taupe);
+    max-width: 560px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .page-subtitle::first-letter {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    float: left;
+    line-height: 0.9;
+    margin-right: 4px;
+    margin-top: 4px;
+    color: var(--terracotta);
+    font-weight: 500;
+  }
+
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 380px 1fr;
+    gap: 40px;
+    align-items: center;
+    margin-bottom: 80px;
+  }
+
+  .hero-left, .hero-right {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .phone {
+    width: 340px;
+    height: 700px;
+    background: linear-gradient(145deg, #2a1f18, #1a120d);
+    border-radius: 52px;
+    padding: 14px;
+    box-shadow:
+      0 40px 80px -20px rgba(61, 46, 36, 0.35),
+      0 0 0 1px rgba(61, 46, 36, 0.3),
+      inset 0 0 0 1px rgba(255,255,255,0.04);
+    position: relative;
+    margin: 0 auto;
+  }
+
+  .phone::before {
+    content: '';
+    position: absolute;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 110px;
+    height: 32px;
+    background: #000;
+    border-radius: 20px;
+    z-index: 10;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+  }
+
+  .phone::after {
+    content: '';
+    position: absolute;
+    top: 28px;
+    left: calc(50% + 28px);
+    width: 8px;
+    height: 8px;
+    background: radial-gradient(circle, #1a3a2a 0%, #0a1a12 100%);
+    border-radius: 50%;
+    z-index: 11;
+    box-shadow: inset 0 0 2px rgba(138, 168, 135, 0.4);
+  }
+
+  .phone-screen {
+    width: 100%;
+    height: 100%;
+    background: var(--oat);
+    border-radius: 40px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .status-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 54px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 30px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--espresso);
+    z-index: 5;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .status-icons {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    font-size: 12px;
+  }
+
+  .battery {
+    width: 22px;
+    height: 11px;
+    border: 1px solid var(--espresso);
+    border-radius: 3px;
+    position: relative;
+    padding: 1px;
+  }
+
+  .battery::after {
+    content: '';
+    position: absolute;
+    right: -3px;
+    top: 3px;
+    width: 2px;
+    height: 5px;
+    background: var(--espresso);
+    border-radius: 0 1px 1px 0;
+  }
+
+  .battery-fill {
+    height: 100%;
+    width: 78%;
+    background: var(--espresso);
+    border-radius: 1px;
+  }
+
+  .dynamic-island {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 114px;
+    height: 36px;
+    background: #000;
+    border-radius: 20px;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.6s cubic-bezier(.2,.7,.3,1);
+    overflow: hidden;
+  }
+
+  .dynamic-island.expanded {
+    width: 300px;
+    height: 72px;
+    border-radius: 32px;
+  }
+
+  .di-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 14px;
+    width: 100%;
+    opacity: 0;
+    transition: opacity 0.4s ease 0.2s;
+  }
+
+  .dynamic-island.expanded .di-content { opacity: 1; }
+
+  .di-pulse {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, var(--terracotta), var(--amber));
+    flex-shrink: 0;
+    position: relative;
+    animation: diPulse 3s ease-in-out infinite;
+  }
+
+  .di-pulse::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--terracotta) 0%, transparent 70%);
+    opacity: 0.4;
+    animation: diPulse 3s ease-in-out infinite;
+  }
+
+  @keyframes diPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.08); opacity: 0.85; }
+  }
+
+  .di-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .di-state {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--oat);
+    font-weight: 500;
+    line-height: 1;
+  }
+
+  .di-sub {
+    font-size: 10px;
+    color: rgba(250, 246, 239, 0.6);
+    margin-top: 3px;
+    letter-spacing: 0.02em;
+  }
+
+  .di-mini-canvas {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .phone-main {
+    position: absolute;
+    inset: 0;
+    padding: 64px 22px 24px;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(180deg, var(--oat) 0%, var(--sand) 100%);
+  }
+
+  .phone-greeting {
+    font-size: 11px;
+    color: var(--taupe);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+
+  .phone-state-name {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 34px;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .phone-state-name em {
+    font-style: italic;
+    color: var(--terracotta);
+  }
+
+  .phone-state-sub {
+    font-size: 12px;
+    color: var(--taupe);
+    margin-bottom: 18px;
+  }
+
+  .art-container {
+    flex: 1;
+    border-radius: 28px;
+    overflow: hidden;
+    position: relative;
+    background: linear-gradient(135deg, #f5e6d3 0%, #e8d5bc 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.4),
+      0 8px 24px -8px rgba(61, 46, 36, 0.2);
+    margin-bottom: 16px;
+  }
+
+  .art-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    filter: blur(0.3px);
+  }
+
+  .art-overlay {
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+    opacity: 0.08;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+  }
+
+  .art-caption {
+    position: absolute;
+    bottom: 14px;
+    left: 16px;
+    right: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    color: var(--espresso);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .art-caption .time {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 13px;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--espresso);
+  }
+
+  .phone-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .phone-card {
+    background: rgba(250, 246, 239, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(229, 220, 201, 0.6);
+    border-radius: 18px;
+    padding: 12px;
+    box-shadow: var(--shadow-pressed);
+  }
+
+  .phone-card-label {
+    font-size: 9px;
+    color: var(--taupe);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+
+  .phone-card-value {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .phone-card-value em {
+    font-style: italic;
+    color: var(--terracotta);
+    font-size: 16px;
+  }
+
+  .phone-card-meta {
+    font-size: 10px;
+    color: var(--taupe);
+  }
+
+  .phone-card-spark {
+    height: 20px;
+    margin-top: 6px;
+  }
+
+  .home-indicator {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 4px;
+    background: var(--espresso);
+    border-radius: 2px;
+    opacity: 0.3;
+    z-index: 5;
+  }
+
+  .info-card {
+    background: var(--oat);
+    border: 1px solid var(--latte);
+    border-radius: var(--radius-lg);
+    padding: 22px;
+    box-shadow: var(--shadow-warm);
+  }
+
+  .info-label {
+    font-size: 10px;
+    color: var(--taupe);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  .info-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 20px;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+
+  .info-title em { font-style: italic; color: var(--terracotta); }
+
+  .info-body {
+    font-size: 13px;
+    color: var(--taupe);
+    line-height: 1.55;
+  }
+
+  .signal-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .signal-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: var(--sand);
+    border: 1px solid var(--latte);
+    border-radius: 12px;
+    box-shadow: var(--shadow-pressed);
+  }
+
+  .signal-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .signal-dot.terracotta { background: var(--terracotta); }
+  .signal-dot.sage { background: var(--sage); }
+  .signal-dot.amber { background: var(--amber); }
+  .signal-dot.clay { background: var(--clay); }
+
+  .signal-name {
+    font-size: 12px;
+    font-weight: 500;
+    flex: 1;
+  }
+
+  .signal-status {
+    font-size: 10px;
+    color: var(--taupe);
+  }
+
+  .section {
+    margin-bottom: 72px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--latte);
+  }
+
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: clamp(24px, 3vw, 32px);
+    letter-spacing: -0.02em;
+  }
+
+  .section-title em { font-style: italic; color: var(--terracotta); }
+
+  .section-meta {
+    font-size: 12px;
+    color: var(--taupe);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .widget-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-auto-rows: minmax(120px, auto);
+    gap: 18px;
+  }
+
+  .widget {
+    background: var(--oat);
+    border: 1px solid var(--latte);
+    border-radius: var(--radius-lg);
+    padding: 18px;
+    box-shadow: var(--shadow-warm);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s cubic-bezier(.2,.7,.3,1);
+  }
+
+  .widget:hover { transform: translateY(-3px); }
+
+  .widget-small { grid-column: span 1; grid-row: span 1; }
+  .widget-medium { grid-column: span 2; grid-row: span 1; }
+  .widget-large { grid-column: span 3; grid-row: span 2; }
+  .widget-wide { grid-column: span 3; grid-row: span 1; }
+
+  .widget-label {
+    font-size: 9px;
+    color: var(--taupe);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .widget-state {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 22px;
+    letter-spacing: -0.01em;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .widget-state em { font-style: italic; color: var(--terracotta); }
+
+  .widget-sub {
+    font-size: 11px;
+    color: var(--taupe);
+    margin-top: 4px;
+  }
+
+  .widget-art {
+    position: absolute;
+    bottom: -20px;
+    right: -20px;
+    width: 140px;
+    height: 140px;
+    opacity: 0.9;
+  }
+
+  .widget-mini-art {
+    width: 100%;
+    height: 60px;
+    margin-top: 10px;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .widget-trend {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    font-size: 11px;
+    color: var(--sage);
+    font-weight: 500;
+  }
+
+  .widget-trend.down { color: var(--terracotta); }
+
+  .widget-insight {
+    margin-top: 12px;
+    padding: 10px 12px;
+    background: var(--sand);
+    border-radius: 12px;
+    font-size: 12px;
+    color: var(--espresso);
+    line-height: 1.5;
+    font-style: italic;
+    font-family: 'Fraunces', serif;
+    border-left: 2px solid var(--terracotta);
+  }
+
+  .longitudinal {
+    background: var(--oat);
+    border: 1px solid var(--latte);
+    border-radius: var(--radius-xl);
+    padding: 32px;
+    box-shadow: var(--shadow-warm);
+  }
+
+  .long-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+  }
+
+  .long-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 24px;
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
+  }
+
+  .long-title em { font-style: italic; color: var(--terracotta); }
+
+  .long-sub {
+    font-size: 13px;
+    color: var(--taupe);
+  }
+
+  .long-range {
+    display: flex;
+    gap: 4px;
+    background: var(--sand);
+    padding: 4px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--latte);
+  }
+
+  .range-btn {
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--taupe);
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+  }
+
+  .range-btn.active {
+    background: var(--oat);
+    color: var(--espresso);
+    box-shadow: var(--shadow-pressed);
+  }
+
+  .long-canvas-wrap {
+    height: 280px;
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    background: linear-gradient(180deg, var(--sand) 0%, var(--oat) 100%);
+    margin-bottom: 20px;
+  }
+
+  .long-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .long-legend {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--taupe);
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .insight-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+
+  .insight-card {
+    background: var(--oat);
+    border: 1px solid var(--latte);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    box-shadow: var(--shadow-warm);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .insight-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
+  .insight-icon.terracotta { background: var(--terracotta-soft); color: var(--terracotta); }
+  .insight-icon.sage { background: var(--sage-soft); color: var(--sage); }
+  .insight-icon.amber { background: var(--amber-soft); color: var(--amber); }
+
+  .insight-label {
+    font-size: 10px;
+    color: var(--taupe);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+
+  .insight-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 18px;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+
+  .insight-title em { font-style: italic; color: var(--terracotta); }
+
+  .insight-body {
+    font-size: 13px;
+    color: var(--taupe);
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+
+  .insight-body::first-letter {
+    font-family: 'Fraunces', serif;
+    font-size: 28px;
+    float: left;
+    line-height: 0.9;
+    margin-right: 4px;
+    margin-top: 3px;
+    color: var(--terracotta);
+    font-weight: 500;
+  }
+
+  .insight-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: var(--espresso);
+    color: var(--oat);
+    border-radius: var(--radius-pill);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    font-family: inherit;
+  }
+
+  .insight-cta:hover { background: #2a1f18; transform: translateY(-1px); }
+
+  .privacy {
+    background: linear-gradient(135deg, var(--sand) 0%, var(--oat) 100%);
+    border: 1px solid var(--latte);
+    border-radius: var(--radius-xl);
+    padding: 48px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+  }
+
+  .privacy-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: clamp(28px, 3.5vw, 38px);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+
+  .privacy-title em { font-style: italic; color: var(--terracotta); }
+
+  .privacy-body {
+    font-size: 14px;
+    color: var(--taupe);
+    line-height: 1.7;
+    margin-bottom: 20px;
+  }
+
+  .privacy-body::first-letter {
+    font-family: 'Fraunces', serif;
+    font-size: 38px;
+    float: left;
+    line-height: 0.9;
+    margin-right: 6px;
+    margin-top: 4px;
+    color: var(--terracotta);
+    font-weight: 500;
+  }
+
+  .privacy-features {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .privacy-feature {
+    display: flex;
+    gap: 14px;
+    padding: 16px;
+    background: var(--oat);
+    border: 1px solid var(--latte);
+    border-radius: 16px;
+    box-shadow: var(--shadow-pressed);
+  }
+
+  .privacy-feature-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--sage-soft);
+    color: var(--sage);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .privacy-feature-title {
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+
+  .privacy-feature-desc {
+    font-size: 12px;
+    color: var(--taupe);
+    line-height: 1.5;
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    filter: blur(4px);
+    transition: opacity 0.8s cubic-bezier(.2,.7,.3,1), transform 0.8s cubic-bezier(.2,.7,.3,1), filter 0.8s cubic-bezier(.2,.7,.3,1);
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+
+  @media (max-width: 1100px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-left, .hero-right { display: none; }
+    .widget-grid { grid-template-columns: repeat(3, 1fr); }
+    .widget-large, .widget-wide { grid-column: span 3; }
+    .widget-medium { grid-column: span 3; }
+    .widget-small { grid-column: span 1; }
+    .insight-grid { grid-template-columns: 1fr; }
+    .privacy { grid-template-columns: 1fr; padding: 32px; }
+  }
+
+  @media (max-width: 640px) {
+    .page { padding: 32px 20px 60px; }
+    .widget-grid { grid-template-columns: repeat(2, 1fr); }
+    .widget-small, .widget-medium, .widget-large, .widget-wide { grid-column: span 2; }
+    .longitudinal { padding: 20px; }
+    .phone { width: 300px; height: 620px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Header -->
+  <header class="page-header reveal">
+    <div class="eyebrow">Introducing Aura · Life Weather</div>
+    <h1 class="page-title">Your inner <em>ecosystem</em>, rendered gently.</h1>
+    <p class="page-subtitle">Aura is a privacy-first companion that turns your passive digital and physical signals into a living, breathing visualization of your energy, creativity, and rhythm. No dashboards. No metrics. Just weather.</p>
+  </header>
+
+  <!-- Hero with phone -->
+  <section class="hero">
+
+    <!-- Left info -->
+    <div class="hero-left">
+      <div class="info-card reveal">
+        <div class="info-label">Current State · 2:47 PM</div>
+        <h3 class="info-title">A <em>flowing</em> afternoon.</h3>
+        <p class="info-body">Your typing cadence is steady, movement light, and vocal tone warm. The ecosystem is blooming.</p>
+        <div class="signal-list">
+          <div class="signal-item">
+            <span class="signal-dot terracotta"></span>
+            <span class="signal-name">Typing rhythm</span>
+            <span class="signal-status">Steady</span>
+          </div>
+          <div class="signal-item">
+            <span class="signal-dot sage"></span>
+            <span class="signal-name">Movement</span>
+            <span class="signal-status">Light walk</span>
+          </div>
+          <div class="signal-item">
+            <span class="signal-dot amber"></span>
+            <span class="signal-name">Vocal tone</span>
+            <span class="signal-status">Warm</span>
+          </div>
+          <div class="signal-item">
+            <span class="signal-dot clay"></span>
+            <span class="signal-name">Sleep depth</span>
+            <span class="signal-status">Restorative</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phone -->
+    <div class="phone reveal">
+      <div class="phone-screen">
+
+        <!-- Dynamic Island -->
+        <div class="dynamic-island expanded" id="dynamicIsland">
+          <div class="di-content">
+            <div class="di-pulse"></div>
+            <div class="di-info">
+              <div class="di-state">Flowing</div>
+              <div class="di-sub">Creative energy · high</div>
+            </div>
+            <canvas class="di-mini-canvas" id="diCanvas" width="88" height="88"></canvas>
+          </div>
+        </div>
+
+        <!-- Status bar -->
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="status-icons">
+            <span>●●●●</span>
+            <span>◉</span>
+            <div class="battery"><div class="battery-fill"></div></div>
+          </div>
+        </div>
+
+        <!-- Main content -->
+        <div class="phone-main">
+          <div class="phone-greeting">Tuesday · Week 46</div>
+          <div class="phone-state-name">You are <em>flowing</em>.</div>
+          <div class="phone-state-sub">A warm, creative current. Good for deep work.</div>
+
+          <div class="art-container">
+            <canvas class="art-canvas" id="mainCanvas"></canvas>
+            <div class="art-overlay"></div>
+            <div class="art-caption">
+              <span>Inner Ecosystem</span>
+              <span class="time">now</span>
+            </div>
+          </div>
+
+          <div class="phone-cards">
+            <div class="phone-card">
+              <div class="phone-card-label">Energy</div>
+              <div class="phone-card-value"><em>Rising</em></div>
+              <div class="phone-card-meta">+12% from morning</div>
+              <canvas class="phone-card-spark" id="spark1" width="140" height="40"></canvas>
+            </div>
+            <div class="phone-card">
+              <div class="phone-card-label">Creative</div>
+              <div class="phone-card-value"><em>Peak</em></div>
+              <div class="phone-card-meta">Highest this week</div>
+              <canvas class="phone-card-spark" id="spark2" width="140" height="40"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="home-indicator"></div>
+      </div>
+    </div>
+
+    <!-- Right info -->
+    <div class="hero-right">
+      <div class="info-card reveal">
+        <div class="info-label">AI Micro-Experiment</div>
+        <h3 class="info-title">Try a <em>20-minute</em> walk.</h3>
+        <p class="info-body">Your pattern shows creative peaks often follow gentle movement. A short walk now could extend this flowing state into the evening.</p>
+        <div style="margin-top: 16px; display: flex; gap: 8px;">
+          <button class="insight-cta" onclick="alert('Walk timer started (demo)')">Begin walk timer</button>
+          <button class="insight-cta" style="background: transparent; color: var(--espresso); border: 1.5px solid var(--latte);" onclick="this.closest('.info-card').style.opacity='0.4'">Dismiss</button>
+        </div>
+      </div>
+      <div class="info-card reveal">
+        <div class="info-label">Pattern Shift Detected</div>
+        <h3 class="info-title">Your <em>evenings</em> are shifting.</h3>
+        <p class="info-body">Over the past two weeks, your wind-down has moved 40 minutes later. The ecosystem is stirring later. Consider a gentler dusk.</p>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Widgets Section -->
+  <section class="section reveal">
+    <div class="section-header">
+      <h2 class="section-title">Home screen <em>weather</em>.</h2>
+      <span class="section-meta">Widgets · Lock Screen · Dynamic Island</span>
+    </div>
+
+    <div class="widget-grid">
+      <div class="widget widget-small">
+        <div class="widget-label">
+          <span>Now</span>
+          <span style="color: var(--terracotta);">◉</span>
+        </div>
+        <div class="widget-state"><em>Flowing</em></div>
+        <div class="widget-sub">Creative · High</div>
+      </div>
+
+      <div class="widget widget-medium">
+        <div class="widget-label">
+          <span>Today's Weather</span>
+          <span>Tue</span>
+        </div>
+        <div class="widget-state">A <em>flowing</em> day.</div>
+        <div class="widget-sub">Warm current since 9 AM · Peak at 2 PM</div>
+        <div class="widget-mini-art">
+          <canvas class="widget-art-canvas" id="widgetArt1" width="400" height="120"></canvas>
+        </div>
+      </div>
+
+      <div class="widget widget-small">
+        <div class="widget-label">
+          <span>Energy</span>
+          <span style="color: var(--sage);">▲</span>
+        </div>
+        <div class="widget-state"><em>Rising</em></div>
+        <div class="widget-sub">+12% today</div>
+      </div>
+
+      <div class="widget widget-large">
+        <div class="widget-label">
+          <span>Weekly Ecosystem</span>
+          <span>46</span>
+        </div>
+        <div class="widget-state">Mostly <em>flowing</em>, with <em>hushed</em> Sundays.</div>
+        <div class="widget-sub">A balanced week. Creative peaks Tue–Thu.</div>
+        <div class="widget-mini-art" style="height: 140px; margin-top: 14px;">
+          <canvas class="widget-art-canvas" id="widgetArt2" width="600" height="280"></canvas>
+        </div>
+        <div class="widget-trend">▲ 18% more flowing hours than last week</div>
+      </div>
+
+      <div class="widget widget-wide">
+        <div class="widget-label">
+          <span>AI Insight</span>
+          <span style="color: var(--terracotta);">◈</span>
+        </div>
+        <div class="widget-state">A gentle <em>nudge</em>.</div>
+        <div class="widget-insight">"Your typing slows after 8 PM three nights in a row. The ecosystem is asking for rest. Try a wind-down ritual tonight."</div>
+      </div>
+
+      <div class="widget widget-small">
+        <div class="widget-label">
+          <span>Sleep</span>
+          <span style="color: var(--clay);">◐</span>
+        </div>
+        <div class="widget-state"><em>Deep</em></div>
+        <div class="widget-sub">7h 42m · Restorative</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Longitudinal View -->
+  <section class="section reveal">
+    <div class="section-header">
+      <h2 class="section-title">Patterns over <em>time</em>.</h2>
+      <span class="section-meta">Longitudinal · Not daily</span>
+    </div>
+
+    <div class="longitudinal">
+      <div class="long-header">
+        <div>
+          <div class="long-title">Six weeks of your <em>inner ecosystem</em>.</div>
+          <div class="long-sub">flowing · settled · stirring · hushed · drifting</div>
+        </div>
+        <div class="long-range">
+          <button class="range-btn active">6w</button>
+          <button class="range-btn">3m</button>
+          <button class="range-btn">6m</button>
+        </div>
+      </div>
+
+      <div class="long-canvas-wrap">
+        <canvas class="long-canvas" id="longCanvas" width="900" height="280"></canvas>
+      </div>
+
+      <div class="long-legend">
+        <div class="legend-item"><span class="legend-dot" style="background:#c86a4d"></span> Flowing</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#8aa887"></span> Settled</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#d4a574"></span> Stirring</div>
+        <div class="legend-item"><span class="legend-dot" style="background:#8c5a4b"></span> Hushed</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Insight cards -->
+  <section class="section reveal">
+    <div class="section-header">
+      <h2 class="section-title">Gentle <em>intelligence</em>.</h2>
+      <span class="section-meta">On-device · Private</span>
+    </div>
+
+    <div class="insight-grid">
+      <div class="insight-card">
+        <div class="insight-icon terracotta">🌿</div>
+        <div class="insight-label">Pattern</div>
+        <div class="insight-title">Creative <em>peaks</em> follow light movement</div>
+        <div class="insight-body">Your data shows a reliable lift in flowing hours after 15–25 minute walks taken before 3pm.</div>
+        <button class="insight-cta">Try a 20-minute walk</button>
+      </div>
+      <div class="insight-card">
+        <div class="insight-icon sage">◌</div>
+        <div class="insight-label">Shift</div>
+        <div class="insight-title">Wind-down drifting <em>later</em></div>
+        <div class="insight-body">Over the last 14 days your settled state begins ~38 minutes later than your 90-day baseline.</div>
+        <button class="insight-cta">See evening patterns</button>
+      </div>
+      <div class="insight-card">
+        <div class="insight-icon amber">✧</div>
+        <div class="insight-label">Opportunity</div>
+        <div class="insight-title">Deep work windows are <em>widening</em></div>
+        <div class="insight-body">Tuesday–Thursday 10am–1pm consistently shows the strongest flowing signatures this month.</div>
+        <button class="insight-cta">Protect these hours</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Privacy -->
+  <section class="section reveal">
+    <div class="privacy">
+      <div>
+        <div class="privacy-title">Your ecosystem is <em>yours</em>.</div>
+        <p class="privacy-body">Every signal stays on your device. Aura never uploads raw data. The only thing that ever leaves (and only with your explicit consent) are tiny, anonymized, aggregated insights you choose to share with compatible agents.</p>
+      </div>
+      <div class="privacy-features">
+        <div class="privacy-feature">
+          <div class="privacy-feature-icon">🔒</div>
+          <div>
+            <div class="privacy-feature-title">Local-first processing</div>
+            <div class="privacy-feature-desc">All inference runs on-device using private on-device models.</div>
+          </div>
+        </div>
+        <div class="privacy-feature">
+          <div class="privacy-feature-icon">↩︎</div>
+          <div>
+            <div class="privacy-feature-title">One-tap data deletion</div>
+            <div class="privacy-feature-desc">Delete your entire history instantly. No account, no server to call.</div>
+          </div>
+        </div>
+        <div class="privacy-feature">
+          <div class="privacy-feature-icon">🧩</div>
+          <div>
+            <div class="privacy-feature-title">Open for agents you trust</div>
+            <div class="privacy-feature-desc">Export only the insights you want other wellness AIs to see.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+function initMainCanvas() {
+  const canvas = document.getElementById('mainCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d', { alpha: true });
+
+  let w = () => canvas.width;
+  let h = () => canvas.height;
+
+  function resize() {
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = Math.floor(rect.width * devicePixelRatio);
+    canvas.height = Math.floor(rect.height * devicePixelRatio);
+    ctx.scale(devicePixelRatio, devicePixelRatio);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const blobs = [
+    { x: 0.3, y: 0.35, r: 110, c: '#c86a4d' },
+    { x: 0.65, y: 0.28, r: 95, c: '#d4a574' },
+    { x: 0.48, y: 0.62, r: 125, c: '#8aa887' },
+    { x: 0.22, y: 0.72, r: 70, c: '#8c5a4b' }
+  ];
+
+  let t = 0;
+  function animate() {
+    const cw = w() / devicePixelRatio;
+    const ch = h() / devicePixelRatio;
+    ctx.clearRect(0, 0, cw, ch);
+
+    const bg = ctx.createLinearGradient(0, 0, 0, ch);
+    bg.addColorStop(0, '#f5e6d3');
+    bg.addColorStop(1, '#faf6ef');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, cw, ch);
+
+    ctx.filter = 'blur(22px)';
+    blobs.forEach((b, i) => {
+      const x = b.x * cw + Math.sin(t * 0.001 + i) * 18;
+      const y = b.y * ch + Math.cos(t * 0.0008 + i * 1.3) * 14;
+      const g = ctx.createRadialGradient(x, y, 8, x, y, b.r);
+      g.addColorStop(0, b.c + '88');
+      g.addColorStop(1, b.c + '00');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(x, y, b.r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.filter = 'none';
+
+    t += 16;
+    requestAnimationFrame(animate);
+  }
+  animate();
+}
+
+function initDICanvas() {
+  const canvas = document.getElementById('diCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  const blobs = [
+    { x: 22, y: 22, r: 24, color: 'rgba(200, 106, 77, 0.8)', speed: 0.002 },
+    { x: 50, y: 40, r: 20, color: 'rgba(212, 165, 116, 0.7)', speed: 0.0025 },
+    { x: 35, y: 55, r: 22, color: 'rgba(138, 168, 135, 0.6)', speed: 0.0018 },
+  ];
+
+  function animate(t) {
+    ctx.clearRect(0, 0, 88, 88);
+    ctx.filter = 'blur(8px)';
+    blobs.forEach((b, i) => {
+      const x = b.x + Math.sin(t * b.speed + i) * 6;
+      const y = b.y + Math.cos(t * b.speed * 0.8 + i) * 5;
+      const g = ctx.createRadialGradient(x, y, 0, x, y, b.r);
+      g.addColorStop(0, b.color);
+      g.addColorStop(1, b.color.replace(/[\d.]+\)$/, '0)'));
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(x, y, b.r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.filter = 'none';
+    requestAnimationFrame(animate);
+  }
+  animate(0);
+}
+
+function initSparkline(id, color, data) {
+  const canvas = document.getElementById(id);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width;
+  const h = canvas.height;
+
+  ctx.clearRect(0, 0, w, h);
+
+  ctx.beginPath();
+  ctx.moveTo(0, h);
+  data.forEach((v, i) => {
+    const x = (i / (data.length - 1)) * w;
+    const y = h - v * h;
+    if (i === 0) ctx.lineTo(x, y);
+    else {
+      const prevX = ((i - 1) / (data.length - 1)) * w;
+      const prevY = h - data[i - 1] * h;
+      const cx = (prevX + x) / 2;
+      ctx.bezierCurveTo(cx, prevY, cx, y, x, y);
+    }
+  });
+  ctx.lineTo(w, h);
+  ctx.closePath();
+  const grad = ctx.createLinearGradient(0, 0, 0, h);
+  grad.addColorStop(0, color + '40');
+  grad.addColorStop(1, color + '00');
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  ctx.beginPath();
+  data.forEach((v, i) => {
+    const x = (i / (data.length - 1)) * w;
+    const y = h - v * h;
+    if (i === 0) ctx.moveTo(x, y);
+    else {
+      const prevX = ((i - 1) / (data.length - 1)) * w;
+      const prevY = h - data[i - 1] * h;
+      const cx = (prevX + x) / 2;
+      ctx.bezierCurveTo(cx, prevY, cx, y, x, y);
+    }
+  });
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+}
+
+function initWidgetArt(id, variant) {
+  const canvas = document.getElementById(id);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width;
+  const h = canvas.height;
+
+  ctx.clearRect(0, 0, w, h);
+
+  const colors = variant === 1 
+    ? ['#c86a4d', '#d4a574', '#8aa887']
+    : ['#8aa887', '#d4a574', '#c86a4d'];
+
+  for (let i = 0; i < 7; i++) {
+    const x = (i / 6) * w;
+    const y = h * (0.3 + Math.sin(i) * 0.2);
+    ctx.fillStyle = colors[i % colors.length] + '55';
+    ctx.beginPath();
+    ctx.ellipse(x, y, 22, 38, (i - 3) * 0.2, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function initLongCanvas() {
+  const canvas = document.getElementById('longCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  const datasets = [
+    { name: 'Flowing', color: '#c86a4d', data: [0.72, 0.81, 0.68, 0.79, 0.85, 0.77, 0.82] },
+    { name: 'Settled', color: '#8aa887', data: [0.45, 0.51, 0.48, 0.39, 0.42, 0.55, 0.38] },
+    { name: 'Stirring', color: '#d4a574', data: [0.31, 0.28, 0.39, 0.25, 0.33, 0.29, 0.41] },
+    { name: 'Hushed', color: '#8c5a4b', data: [0.18, 0.12, 0.22, 0.15, 0.19, 0.11, 0.24] }
+  ];
+
+  function resize() {
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * devicePixelRatio;
+    canvas.height = rect.height * devicePixelRatio;
+    ctx.scale(devicePixelRatio, devicePixelRatio);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  let t = 0;
+  function animate() {
+    const cw = canvas.width / devicePixelRatio;
+    const ch = canvas.height / devicePixelRatio;
+    ctx.clearRect(0, 0, cw, ch);
+
+    const bg = ctx.createLinearGradient(0, 0, 0, ch);
+    bg.addColorStop(0, '#f3ebdd');
+    bg.addColorStop(1, '#faf6ef');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, cw, ch);
+
+    datasets.forEach((ds, idx) => {
+      ctx.beginPath();
+      ctx.moveTo(0, ch);
+
+      ds.data.forEach((v, i) => {
+        const x = (i / (ds.data.length - 1)) * cw;
+        const anim = Math.sin(t * 0.0005 + i * 0.1 + idx) * 0.015;
+        const y = ch - (v + anim) * ch * 0.85 - idx * 8;
+        if (i === 0) ctx.lineTo(x, y);
+        else {
+          const prevX = ((i - 1) / (ds.data.length - 1)) * cw;
+          const prevV = ds.data[i - 1] + Math.sin(t * 0.0005 + (i - 1) * 0.1 + idx) * 0.015;
+          const prevY = ch - prevV * ch * 0.85 - idx * 8;
+          const cx = (prevX + x) / 2;
+          ctx.bezierCurveTo(cx, prevY, cx, y, x, y);
+        }
+      });
+
+      ctx.lineTo(cw, ch);
+      ctx.closePath();
+
+      const grad = ctx.createLinearGradient(0, 0, 0, ch);
+      grad.addColorStop(0, ds.color + '55');
+      grad.addColorStop(1, ds.color + '08');
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      ctx.beginPath();
+      ds.data.forEach((v, i) => {
+        const x = (i / (ds.data.length - 1)) * cw;
+        const anim = Math.sin(t * 0.0005 + i * 0.1 + idx) * 0.015;
+        const y = ch - (v + anim) * ch * 0.85 - idx * 8;
+        if (i === 0) ctx.moveTo(x, y);
+        else {
+          const prevX = ((i - 1) / (ds.data.length - 1)) * cw;
+          const prevV = ds.data[i - 1] + Math.sin(t * 0.0005 + (i - 1) * 0.1 + idx) * 0.015;
+          const prevY = ch - prevV * ch * 0.85 - idx * 8;
+          const cx = (prevX + x) / 2;
+          ctx.bezierCurveTo(cx, prevY, cx, y, x, y);
+        }
+      });
+      ctx.strokeStyle = ds.color + 'aa';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    });
+
+    ctx.fillStyle = 'rgba(107, 89, 73, 0.4)';
+    ctx.font = '10px Inter';
+    for (let i = 0; i < 7; i++) {
+      const x = (i / 6) * cw;
+      ctx.fillText(`W${40 + i}`, x + 4, ch - 6);
+      ctx.strokeStyle = 'rgba(229, 220, 201, 0.6)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, ch - 16);
+      ctx.stroke();
+    }
+
+    t += 16;
+    requestAnimationFrame(animate);
+  }
+  animate();
+
+  window.addEventListener('resize', resize);
+}
+
+document.querySelectorAll('.range-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+window.addEventListener('load', () => {
+  initMainCanvas();
+  initDICanvas();
+  initSparkline('spark1', '#c86a4d', [0.3, 0.35, 0.32, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.72, 0.75]);
+  initSparkline('spark2', '#8aa887', [0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.92]);
+  initWidgetArt('widgetArt1', 1);
+  initWidgetArt('widgetArt2', 2);
+  initLongCanvas();
+});
+
+const di = document.getElementById('dynamicIsland');
+if (di) {
+  di.addEventListener('click', () => {
+    di.classList.toggle('expanded');
+  });
+}
+</script>
+
+</body>
+</html>
